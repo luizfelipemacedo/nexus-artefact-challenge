@@ -40,7 +40,7 @@ function formatDate(value: string) {
 
 function TaskCard({ task, onDelete }: { task: Task; onDelete: (task: Task) => void }) {
   return (
-    <Card className="group relative overflow-hidden border-cyan-500/25 bg-card/80 shadow-[0_0_30px_rgba(0,240,255,0.04)] backdrop-blur-sm transition-colors hover:border-cyan-400/55">
+    <Card className="group relative flex h-full flex-col overflow-hidden border-cyan-500/25 bg-card/80 shadow-[0_0_30px_rgba(0,240,255,0.04)] backdrop-blur-sm transition-colors hover:border-cyan-400/55">
       <div className="absolute inset-y-0 left-0 w-px bg-cyan-400/50 opacity-0 transition-opacity group-hover:opacity-100" />
       <CardHeader className="gap-3 pb-3">
         <div className="flex items-start justify-between gap-4">
@@ -54,7 +54,7 @@ function TaskCard({ task, onDelete }: { task: Task; onDelete: (task: Task) => vo
           <span className="rounded border border-white/10 px-2 py-1">{formatDate(task.dataCriacao)}</span>
         </div>
       </CardHeader>
-      <CardContent className="min-h-16">
+      <CardContent className="min-h-16 flex-1">
         <p className="font-mono text-sm leading-6 text-slate-400">{task.descricao || "No description attached to this task."}</p>
       </CardContent>
       <CardFooter className="justify-end gap-2 border-t border-white/5 pt-4">
