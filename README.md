@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NEXUS // Task Control
 
-## Getting Started
+A focused task-management interface built with Next.js 15 App Router, tRPC v11, Zod, TanStack Query, and shadcn/ui. The visual language is a restrained Tech / Cyberpunk Dark command surface.
+Created as a technical challenge for Artefact.
 
-First, run the development server:
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application is available at [http://localhost:3000](http://localhost:3000). The equivalent npm command is `npm run dev` when dependencies are installed with npm.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `server/db.ts` contains the process-local task store and seeded task data.
+- `server/routers/_app.ts` defines the tRPC router, Zod validation, cursor pagination, and CRUD procedures.
+- `app/api/trpc/[trpc]/route.ts` exposes the router through the Next.js App Router fetch adapter.
+- `app/page.tsx` calls the router directly on the server for the first page. The client list receives that page as initial data and uses tRPC's infinite query for later pages.
+- `app/providers.tsx` owns the browser QueryClient, tRPC client, and Sonner toaster.
+- `components/tasks/task-list.tsx` implements infinite scroll, loading states, edit navigation, and delete confirmation.
+- `components/tasks/task-form.tsx` is shared by the create and edit routes.
 
-## Learn More
+## tRPC procedures
 
-To learn more about Next.js, take a look at the following resources:
+- `getInfiniteTasks`: returns a bounded page of tasks and a stable cursor anchored to the last task.
+- `getById`: loads one task and returns `NOT_FOUND` when it does not exist.
+- `create`: validates and creates a task with a server-generated id and timestamp.
+- `update`: validates and updates the title/description while preserving identity and creation time.
+- `delete`: removes a task and returns its id.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `/` - SSR task registry with infinite scroll.
+- `/tasks/new` - create form.
+- `/tasks/[id]` - edit form.
+- `/api/trpc/[trpc]` - tRPC HTTP transport.
 
-## Deploy on Vercel
+## Seed test data
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+With the development server running, add 100 synthetic tasks for infinite-scroll testing:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm seed
+```
+
+The amount is configurable and accepts values from 1 to 1000:
+
+```bash
+pnpm seed -- 250
+```
+
+To target another local server, set `TASK_APP_URL`:
+
+```bash
+TASK_APP_URL=http://localhost:3001 pnpm seed -- 100
+```
+
+## Persistence note
+
+Tasks are stored in a module-level `Map` intentionally. This keeps the challenge self-contained and demonstrates the server/client boundary, but data is lost whenever the process restarts and is not shared across multiple server instances. A production deployment should replace `server/db.ts` with a durable database repository.
