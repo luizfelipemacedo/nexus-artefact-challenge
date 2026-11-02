@@ -146,10 +146,10 @@ export function TaskForm({ mode, taskId }: TaskFormProps) {
         {formError && <p className="font-sans border border-rose-500/25 bg-rose-500/5 p-3 text-sm text-rose-300">{formError}</p>}
 
         <div className="flex flex-col-reverse gap-3 border-t border-white/5 pt-5 sm:flex-row sm:justify-end">
-          <Button render={<Link href="/" />} nativeButton={false} type="button" variant="ghost" disabled={isPending} className="font-sans cursor-pointer">
+          <Button render={<Link href="/" />} nativeButton={false} type="button" variant="ghost" disabled={isPending} className="font-mono cursor-pointer">
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending} className="font-sans cursor-pointer shadow-[0_0_18px_rgba(0,240,255,0.16)]">
+          <Button type="submit" disabled={isPending} className="font-mono cursor-pointer shadow-[0_0_18px_rgba(0,240,255,0.16)]">
             {isPending ? <Loader2 className="animate-spin" /> : <Save />}
             {isEdit ? "Save changes" : "Create task"}
           </Button>

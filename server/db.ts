@@ -58,8 +58,15 @@ const seedTasks: Task[] = [
   },
 ];
 
-// This module-level store is process-local by design and resets when the server restarts.
-const tasks = new Map(seedTasks.map((task) => [task.id, task]));
+declare global {
+  var artefactChallengeTasks: Map<string, Task> | undefined;
+}
+
+// Keep one in-memory store shared by route-handler and SSR bundles in this process.
+const tasks =
+  globalThis.artefactChallengeTasks ??= new Map(
+    seedTasks.map((task) => [task.id, task]),
+  );
 
 export function listTasks() {
   return [...tasks.values()].sort((a, b) => {
