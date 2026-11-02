@@ -1,5 +1,6 @@
 import { appRouter } from "@/server/routers/_app";
 import { TaskList } from "@/components/tasks/task-list";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export default async function Home() {
         <TaskList initialPage={initialPage} />
         <footer className="mt-8 flex items-center justify-between border-t border-white/5 pt-5 font-mono text-[10px] uppercase tracking-widest text-slate-600">
           <span>Local memory // v1.0</span>
+          <span>Developed by <Link href="https://github.com/luizfelipemacedo" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300">Luiz Felipe Macedo</Link></span>
           <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" /> System nominal</span>
         </footer>
       </div>
