@@ -1,7 +1,7 @@
 "use client";
 
 import type { inferRouterOutputs } from "@trpc/server";
-import { AlertTriangle, Edit3, Loader2, Plus, Radar, Trash2 } from "lucide-react";
+import { AlertTriangle, ArrowUp, Edit3, Loader2, Plus, Radar, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -81,6 +81,7 @@ export function TaskList({ initialPage }: { initialPage: TaskPage }) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isFetchingNextPageRef = useRef(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const utils = trpc.useUtils();
   const tasksQuery = trpc.task.getInfiniteTasks.useInfiniteQuery(
     { limit: PAGE_SIZE },
@@ -117,6 +118,14 @@ export function TaskList({ initialPage }: { initialPage: TaskPage }) {
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  useEffect(() => {
+    const handleScroll = () => setShowBackToTop(window.scrollY > 560);
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const tasks = Array.from(
     new Map(
@@ -206,6 +215,20 @@ export function TaskList({ initialPage }: { initialPage: TaskPage }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {showBackToTop ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-lg"
+          aria-label="Back to top"
+          title="Back to top"
+          className="cursor-pointer fixed right-5 bottom-5 z-20 border-cyan-500/35 bg-[#0a101b]/90 text-cyan-300 shadow-[0_0_22px_rgba(0,240,255,0.12)] backdrop-blur-sm"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <ArrowUp />
+        </Button>
+      ) : null}
     </>
   );
 }
