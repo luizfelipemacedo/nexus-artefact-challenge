@@ -45,18 +45,6 @@ With the development server running, add 100 synthetic tasks for infinite-scroll
 pnpm seed
 ```
 
-The amount is configurable and accepts values from 1 to 1000:
-
-```bash
-pnpm seed -- 250
-```
-
-To target another local server, set `TASK_APP_URL`:
-
-```bash
-TASK_APP_URL=http://localhost:3001 pnpm seed -- 100
-```
-
 ## Persistence note
 
 Tasks are stored in a module-level `Map` intentionally. This keeps the challenge self-contained and demonstrates the server/client boundary, but data is lost whenever the process restarts and is not shared across multiple server instances. A production deployment should replace `server/db.ts` with a durable database repository.
